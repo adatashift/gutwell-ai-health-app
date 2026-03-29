@@ -209,6 +209,40 @@ body { font-family: 'DM Sans', sans-serif; background: #F7F6F2; color: #1A1916; 
 </head>
 <body>
 
+<!-- ONBOARDING SCREEN -->
+<div id="onboarding">
+  <div class="ob-logo">Gut<span>Well</span></div>
+  <div class="ob-tagline">Caribbean Gut Health Companion</div>
+
+  <div class="ob-section">
+    <div class="ob-section-title">What This App Is</div>
+    <p>GutWell is an educational demonstration project exploring how AI can be used to build practical, real-world health tools. It was created to showcase prompt engineering and AI-assisted app development using Claude by Anthropic.</p>
+  </div>
+
+  <div class="ob-section">
+    <div class="ob-section-title">What It Offers</div>
+    <p>A structured gut health protocol with Caribbean-specific meal guidance, herb rotation, daily symptom tracking, journaling, and a wellness reference guide — all for general educational purposes.</p>
+  </div>
+
+  <div class="ob-warn">
+    <div class="ob-warn-title">Important Disclaimer</div>
+    <p>This app is for educational and demonstration purposes only. It is not a medical application and does not provide medical advice. Always consult a qualified healthcare practitioner before making any changes to your diet, supplements, or health routine.</p>
+  </div>
+
+  <div class="ob-check-row" onclick="toggleObCheck()">
+    <div class="ob-checkbox" id="ob-checkbox"></div>
+    <div class="ob-check-text">I understand this is an educational demonstration project and not a substitute for professional medical advice.</div>
+  </div>
+
+  <button class="ob-btn" id="ob-btn" onclick="enterApp()">I Understand &mdash; Enter GutWell</button>
+
+  <div class="ob-footer">
+    Built with Claude AI &middot; A prompt engineering project<br>
+    &copy; 2025 &middot; Educational use only
+  </div>
+</div>
+```
+  
 <!-- WhatsApp warning banner - shown if opened inside WhatsApp/viewer -->
 <div id="owbanner">
   <strong>Important:</strong> Tap the 3 dots (top right) &rarr; "Open in Chrome" or "Open in Browser" for GutWell to work properly.
