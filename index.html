@@ -408,6 +408,31 @@ body { font-family: 'DM Sans', sans-serif; background: #F7F6F2; color: #1A1916; 
 </div>
 
 <script>
+// ── ONBOARDING ───────────────────────────────────────────────────
+var obChecked = false;
+
+function toggleObCheck() {
+  obChecked = !obChecked;
+  var cb = document.getElementById('ob-checkbox');
+  var btn = document.getElementById('ob-btn');
+  if (cb) { cb.className = 'ob-checkbox' + (obChecked ? ' checked' : ''); cb.innerHTML = obChecked ? '&#10003;' : ''; }
+  if (btn) { btn.className = 'ob-btn' + (obChecked ? ' ready' : ''); }
+}
+
+function enterApp() {
+  if (!obChecked) return;
+  var ob = document.getElementById('onboarding');
+  if (ob) ob.classList.add('hidden');
+  LS.set('ob_accepted', true);
+}
+
+function checkOnboarding() {
+  if (LS.get('ob_accepted')) {
+    var ob = document.getElementById('onboarding');
+    if (ob) ob.classList.add('hidden');
+  }
+}
+```
 // Detect WhatsApp / in-app browser and show warning
 (function() {
   var ua = navigator.userAgent || '';
