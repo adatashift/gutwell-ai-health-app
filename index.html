@@ -281,6 +281,13 @@ body { font-family: 'DM Sans', sans-serif; background: #F7F6F2; color: #1A1916; 
       <label class="sw-label">Skin flare today?</label>
       <label class="sw"><input type="checkbox" id="eczema-sw"><span class="swtrack"></span></label>
     </div>
+    <label style="display:block;font-family:'DM Mono',monospace;font-size:10px;color:#8A8578;margin-bottom:8px;letter-spacing:0.3px">WATER INTAKE TODAY</label>
+    <div class="pills" id="water-pills">
+      <button class="pill" onclick="pickPill('water-pills', this)">Less than 1L</button>
+      <button class="pill" onclick="pickPill('water-pills', this)">1 - 1.5L</button>
+      <button class="pill" onclick="pickPill('water-pills', this)">1.5 - 2L</button>
+      <button class="pill" onclick="pickPill('water-pills', this)">2L or more</button>
+    </div>
     <button class="btn btn-g" onclick="submitCheckin()">Save Check-In</button>
   </div>
 </div>
@@ -398,6 +405,7 @@ body { font-family: 'DM Sans', sans-serif; background: #F7F6F2; color: #1A1916; 
     <h2>🌿 About GutWell</h2>
     <p>My mummy is a health enthusiast.</p>
     <p>In one of our many conversations about wellness, an idea came up regarding the brain-gut connection and the links between digestion, energy levels, and how that can be tracked.</p>
+    <p>That conversation planted a seed. Because while GutWell is a demonstration of AI-assisted development, it is also something more than that — it is about encouraging healthy habits. Sound health begins in the gut, and small, consistent daily habits are where that journey starts.</p>
     <p>Around the same time, I had been curious about the real capability of AI — specifically Claude by Anthropic. Not the surface-level "ask it a question" kind of use, but something deeper. Could I use it to actually build something? Something functional, useful, and deployable?</p>
     <p style="margin-bottom:0">GutWell became the answer to both questions at once.</p>
   </div>
@@ -669,9 +677,9 @@ var PHASES = [
     why:'This phase prioritises soluble fibre from green banana and oats to gently stimulate motility without worsening bloating. Papaya provides natural digestive enzymes. Okra soothes and lubricates the intestinal lining. Fresh fish delivers omega-3s targeting gut-skin inflammation.',
     reminders:[
       {id:'r1', name:'Warm Lemon & Ginger Water', detail:'First thing, before coffee or food', time:'Morning'},
-      {id:'r2', name:'Psyllium Husk', detail:'Half tsp in water, build to 1 tsp over 2 weeks', time:'Morning'},
+      {id:'r2', name:'Chia Seeds', detail:'1 tbsp stirred into water and left 10 mins to gel, or add to yogurt, a smoothie, or overnight oats', time:'Morning'},
       {id:'r3', name:'Breathing Before Meals', detail:'2 min diaphragmatic breathing before eating', time:'Midday'},
-      {id:'r4', name:'Evening Walk', detail:'10 minutes after dinner - supports motility', time:'Evening'},
+      {id:'r4', name:'Take a Walk', detail:'After any main meal - lunch, dinner, or after work. Even 10 minutes counts', time:'Flexible'},
       {id:'r5', name:'Magnesium Glycinate', detail:'200mg before bed', time:'Night'},
       {id:'r6', name:'Herb Tea', detail:'Check Herbs tab for today rotation', time:'Evening'}
     ]
@@ -683,9 +691,9 @@ var PHASES = [
     reminders:[
       {id:'r1', name:'Warm Lemon & Ginger Water', detail:'First thing, before coffee or food', time:'Morning'},
       {id:'r2', name:'Kefir or Fermented Food', detail:'One serving daily with breakfast', time:'Morning'},
-      {id:'r3', name:'Psyllium Husk', detail:'1 tsp in water, building consistency', time:'Morning'},
+      {id:'r3', name:'Chia Seeds', detail:'1 tbsp stirred into water and left 10 mins to gel, or add to yogurt, a smoothie, or overnight oats', time:'Morning'},
       {id:'r4', name:'Breathing Before Meals', detail:'2 min diaphragmatic breathing', time:'Midday'},
-      {id:'r5', name:'Evening Walk', detail:'10-15 minutes after dinner', time:'Evening'},
+      {id:'r5', name:'Take a Walk', detail:'After any main meal - lunch, dinner, or after work. Even 10 minutes counts', time:'Flexible'},
       {id:'r6', name:'Magnesium Glycinate', detail:'200mg before bed', time:'Night'}
     ]
   },
@@ -698,7 +706,7 @@ var PHASES = [
       {id:'r2', name:'Omega-3 Supplement', detail:'Fish oil or algae-based with breakfast', time:'Morning'},
       {id:'r3', name:'Zinc Supplement', detail:'With food - supports gut lining and skin', time:'Midday'},
       {id:'r4', name:'Breathing and Journaling', detail:'5 min breathing plus brief journal entry', time:'Any time'},
-      {id:'r5', name:'Evening Walk', detail:'15+ minutes - now a habit, keep it', time:'Evening'},
+      {id:'r5', name:'Take a Walk', detail:'After any main meal - lunch, dinner, or after work. A habit now, keep it going', time:'Flexible'},
       {id:'r6', name:'Magnesium Glycinate', detail:'200mg before bed', time:'Night'}
     ]
   }
@@ -709,7 +717,7 @@ var HERBS = [
   {icon:'🌿', name:'Peppermint Tea', use:'Antispasmodic, relieves gas and cramping. Best after dinner. Safe daily.', days:[0,1,2,3,4,5,6]},
   {icon:'🍃', name:'Soursop Leaf Tea', use:'Antimicrobial, digestive support. Traditional Caribbean remedy. 3x per week max.', days:[1,3,5]},
   {icon:'🌱', name:'Moringa Tea', use:'Nutrient-dense, anti-inflammatory, liver and skin support. 4x per week.', days:[0,2,4,6]},
-  {icon:'🍵', name:'Cerasee (Bitter Melon)', use:'Blood purifying, anti-inflammatory. Potent - 3x per week maximum only.', days:[2,4,6]}
+  {icon:'🍵', name:'Caraili (Bitter Melon)', use:'Blood purifying, anti-inflammatory. Also known as cerasee or bitter melon. Potent - 3x per week maximum only.', days:[2,4,6]}
 ];
 
 // ── PHASE HELPERS ────────────────────────────────────────────────
@@ -849,12 +857,14 @@ function submitCheckin() {
   var bloating = getSelectedDot('dots-bloating');
   var energy = getSelectedDot('dots-energy');
   var bowelEl = document.querySelector('#bowel-pills .pill.on');
+  var waterEl = document.querySelector('#water-pills .pill.on');
   if (!bloating || !energy || !bowelEl) { toast('Please fill in all fields'); return; }
   var entry = {
     date: todayKey(),
     bloating: bloating,
     energy: energy,
     bowel: bowelEl.textContent,
+    water: waterEl ? waterEl.textContent : 'Not logged',
     eczema: document.getElementById('eczema-sw').checked
   };
   LS.set('checkin_' + todayKey(), entry);
@@ -1050,6 +1060,7 @@ function showDetail(entry, key, journal) {
   html += '<div class="detrow"><span class="detk">BLOATING</span><span>' + entry.bloating + '/5</span></div>';
   html += '<div class="detrow"><span class="detk">ENERGY</span><span>' + entry.energy + '/5</span></div>';
   html += '<div class="detrow"><span class="detk">BOWEL</span><span>' + esc(entry.bowel) + '</span></div>';
+  html += '<div class="detrow"><span class="detk">WATER</span><span>' + (entry.water || 'Not logged') + '</span></div>';
   html += '<div class="detrow"><span class="detk">SKIN FLARE</span><span>' + (entry.eczema ? 'Yes' : 'No') + '</span></div>';
   if (journal) {
     html += '<div class="detrow" style="flex-direction:column;align-items:flex-start"><span class="detk" style="margin-bottom:5px">JOURNAL</span><div class="detjournal">' + esc(journal.text) + '</div></div>';
@@ -1149,13 +1160,13 @@ function exportData() {
   var jentries = LS.get('journal_entries', []);
   var jmap = {};
   for (var i = 0; i < jentries.length; i++) { jmap[jentries[i].date] = jentries[i].text; }
-  var rows = ['Date,Bloating (1-5),Energy (1-5),Bowel Movement,Skin Flare,Journal Entry'];
+  var rows = ['Date,Bloating (1-5),Energy (1-5),Bowel Movement,Water Intake,Skin Flare,Journal Entry'];
   idx.sort();
   for (var i = 0; i < idx.length; i++) {
     var e = LS.get('checkin_' + idx[i]);
     if (e) {
       var j = jmap[e.date] ? jmap[e.date].replace(/"/g, '""').replace(/\n/g, ' ') : '';
-      rows.push(e.date + ',' + e.bloating + ',' + e.energy + ',"' + e.bowel + '",' + (e.eczema ? 'Yes' : 'No') + ',"' + j + '"');
+      rows.push(e.date + ',' + e.bloating + ',' + e.energy + ',"' + e.bowel + '","' + (e.water || 'Not logged') + '",' + (e.eczema ? 'Yes' : 'No') + ',"' + j + '"');
     }
   }
   try {
