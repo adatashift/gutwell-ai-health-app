@@ -88,12 +88,8 @@ ready and just start.
 
 📧 renellegriffith1@gmail.com
 💼 https://www.linkedin.com/in/renellegriffith/
-🌐 GUTWELL LINK https://adatashift.github.io/gutwell/
+🌐 GUTWELL LINK https://adatashift.github.io/gutwell-ai-health-app/
 ---
 
 *Continuous learner · Problem solver · Trinidad & Tobago · 
 Powered by curiosity
----
-
-*Continuous learner · Problem solver · Trinidad & Tobago · 
-Powered by curiosity and too many conversations with my mum*
