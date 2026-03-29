@@ -491,16 +491,10 @@ function obEnter() {
   if (!cb || !cb.checked) return;
   var ob = document.getElementById('onboarding');
   if (ob) ob.style.display = 'none';
-  try { localStorage.setItem('gw_seen', '1'); } catch(e) {}
 }
 
 function obCheck() {
-  try {
-    if (localStorage.getItem('gw_seen') === '1') {
-      var ob = document.getElementById('onboarding');
-      if (ob) ob.style.display = 'none';
-    }
-  } catch(e) {}
+  // Onboarding shows every visit
 }
 
 // Detect WhatsApp / in-app browser and show warning
