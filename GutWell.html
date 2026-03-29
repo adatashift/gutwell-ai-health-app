@@ -1,0 +1,1034 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<title>GutWell</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=DM+Mono:wght@400;500&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: 'DM Sans', sans-serif; background: #F7F6F2; color: #1A1916; min-height: 100vh; }
+
+/* OPEN-IN-BROWSER BANNER */
+#owbanner { background: #1A1916; color: #fff; padding: 12px 16px; font-size: 13px; text-align: center; line-height: 1.5; display: none; }
+#owbanner strong { color: #FFD166; }
+
+/* HEADER */
+#hdr { background: #fff; border-bottom: 1px solid #E2DDD4; padding: 0 16px; display: flex; align-items: center; justify-content: space-between; height: 52px; position: sticky; top: 0; z-index: 100; }
+.logo { font-family: 'DM Serif Display', serif; font-size: 20px; color: #2D6A4F; }
+.logo span { color: #B5832A; }
+.datebadge { font-family: 'DM Mono', monospace; font-size: 10px; color: #8A8578; background: #F0EEE8; border: 1px solid #E2DDD4; padding: 3px 10px; border-radius: 20px; }
+
+/* TOP NAV */
+#topnav { background: #fff; border-bottom: 1px solid #E2DDD4; display: flex; overflow-x: auto; -webkit-overflow-scrolling: touch; padding: 0; scrollbar-width: none; }
+#topnav::-webkit-scrollbar { display: none; }
+.tnav { flex-shrink: 0; font-family: 'DM Mono', monospace; font-size: 11px; letter-spacing: 0.5px; text-transform: uppercase; color: #8A8578; padding: 13px 14px; border: none; background: none; border-bottom: 2px solid transparent; cursor: pointer; white-space: nowrap; text-decoration: none; display: block; }
+.tnav.active { color: #2D6A4F; border-bottom-color: #2D6A4F; }
+
+/* PANELS */
+.panel { display: none; padding: 16px; min-height: 60vh; }
+.panel.active { display: block; }
+
+/* CARDS */
+.card { background: #fff; border: 1px solid #E2DDD4; border-radius: 12px; padding: 16px; margin-bottom: 14px; }
+.card h2 { font-family: 'DM Serif Display', serif; font-size: 17px; margin-bottom: 4px; }
+.card p { font-size: 13px; color: #8A8578; margin-bottom: 14px; line-height: 1.5; }
+.slabel { font-family: 'DM Mono', monospace; font-size: 10px; letter-spacing: 1px; text-transform: uppercase; color: #8A8578; margin-bottom: 8px; display: block; }
+
+/* PHASE BANNER */
+.pbanner { border-radius: 12px; padding: 16px 18px; color: #fff; display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px; }
+.pbanner.p1 { background: linear-gradient(135deg, #2D6A4F, #1a4d38); }
+.pbanner.p2 { background: linear-gradient(135deg, #1d6a8a, #134d66); }
+.pbanner.p3 { background: linear-gradient(135deg, #7a3fa0, #5a2d78); }
+.pbanner.pm { background: linear-gradient(135deg, #8a6a2d, #6b5020); }
+.pb-label { font-family: 'DM Mono', monospace; font-size: 9px; letter-spacing: 1px; opacity: 0.7; margin-bottom: 3px; }
+.pb-title { font-family: 'DM Serif Display', serif; font-size: 18px; }
+.pb-desc { font-size: 12px; opacity: 0.8; margin-top: 3px; line-height: 1.4; }
+.pb-num { font-family: 'DM Serif Display', serif; font-size: 48px; opacity: 0.15; line-height: 1; }
+
+/* ROADMAP */
+.roadmap { display: flex; border-radius: 10px; overflow: hidden; border: 1px solid #E2DDD4; margin-bottom: 16px; }
+.rmstep { flex: 1; padding: 10px 8px; background: #F0EEE8; border-right: 1px solid #E2DDD4; position: relative; min-width: 0; }
+.rmstep:last-child { border-right: none; }
+.rmstep.rma { background: #D8EDD8; }
+.rmstep.rmd { opacity: 0.5; }
+.rmstep .rmlabel { font-family: 'DM Mono', monospace; font-size: 9px; color: #8A8578; margin-bottom: 2px; }
+.rmstep .rmname { font-size: 11px; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.rmstep .rmwk { font-size: 10px; color: #8A8578; }
+.rmtick { position: absolute; top: 8px; right: 6px; font-size: 11px; color: #2D6A4F; }
+
+/* DOTS */
+.score-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 14px; }
+.score-block label { display: block; font-family: 'DM Mono', monospace; font-size: 10px; color: #8A8578; margin-bottom: 7px; letter-spacing: 0.3px; }
+.dots { display: flex; gap: 6px; }
+.dot { width: 36px; height: 36px; border-radius: 50%; border: 1.5px solid #E2DDD4; background: #F0EEE8; cursor: pointer; font-family: 'DM Mono', monospace; font-size: 13px; display: flex; align-items: center; justify-content: center; color: #8A8578; }
+.dot.on { background: #2D6A4F; border-color: #2D6A4F; color: #fff; }
+
+/* PILLS */
+.pills { display: flex; gap: 7px; flex-wrap: wrap; margin-bottom: 14px; }
+.pill { font-family: 'DM Mono', monospace; font-size: 11px; padding: 8px 12px; border-radius: 20px; border: 1.5px solid #E2DDD4; background: #F0EEE8; color: #8A8578; cursor: pointer; }
+.pill.on { background: #D8EDD8; border-color: #2D6A4F; color: #2D6A4F; font-weight: 600; }
+
+/* TOGGLE */
+.sw-row { display: flex; align-items: center; gap: 12px; margin-bottom: 14px; }
+.sw-row label.sw-label { font-size: 13px; color: #8A8578; }
+.sw { position: relative; width: 44px; height: 24px; flex-shrink: 0; }
+.sw input { opacity: 0; width: 0; height: 0; }
+.swtrack { position: absolute; top: 0; left: 0; right: 0; bottom: 0; background: #E2DDD4; border-radius: 24px; cursor: pointer; transition: 0.2s; }
+.swtrack:before { content: ''; position: absolute; width: 18px; height: 18px; left: 3px; top: 3px; background: #fff; border-radius: 50%; transition: 0.2s; }
+.sw input:checked + .swtrack { background: #2D6A4F; }
+.sw input:checked + .swtrack:before { transform: translateX(20px); }
+
+/* BUTTONS */
+.btn { font-family: 'DM Mono', monospace; font-size: 12px; letter-spacing: 0.5px; text-transform: uppercase; padding: 12px 22px; border-radius: 8px; border: none; cursor: pointer; font-weight: 500; display: inline-block; }
+.btn-g { background: #2D6A4F; color: #fff; }
+.btn-w { background: #F0EEE8; color: #1A1916; border: 1px solid #E2DDD4; }
+.btn-r { background: #fdddd8; color: #C0392B; border: 1px solid #f5c0b8; }
+.btnrow { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 4px; }
+
+/* NOTICE */
+.notice { background: #D8EDD8; border: 1px solid #2D6A4F; border-radius: 8px; padding: 10px 13px; font-family: 'DM Mono', monospace; font-size: 11px; color: #2D6A4F; margin-bottom: 14px; line-height: 1.5; }
+.warn { background: #FBF0DC; border: 1px solid #e8cfa0; border-radius: 10px; padding: 14px 16px; font-size: 13px; color: #7a5a1a; line-height: 1.7; margin-bottom: 14px; }
+
+/* STATS */
+.stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 14px; }
+.stat { background: #F0EEE8; border: 1px solid #E2DDD4; border-radius: 10px; padding: 12px; text-align: center; }
+.stat-n { font-family: 'DM Serif Display', serif; font-size: 26px; color: #2D6A4F; }
+.stat-l { font-family: 'DM Mono', monospace; font-size: 9px; color: #8A8578; letter-spacing: 0.3px; margin-top: 2px; }
+
+/* CALENDAR */
+.calgrid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 4px; margin-top: 8px; }
+.calcell { position: relative; width: 100%; padding-top: 100%; border-radius: 5px; cursor: pointer; }
+.calinner { position: absolute; top: 0; left: 0; right: 0; bottom: 0; display: flex; align-items: center; justify-content: center; border-radius: 5px; border: 1px solid #E2DDD4; background: #F0EEE8; font-family: 'DM Mono', monospace; font-size: 10px; color: #8A8578; }
+.calinner.cg { background: #D8EDD8; border-color: #2D6A4F; color: #2D6A4F; }
+.calinner.cm { background: #FBF0DC; border-color: #B5832A; color: #B5832A; }
+.calinner.cp { background: #fdddd8; border-color: #e07060; color: #c0392b; }
+.calinner.ct { box-shadow: 0 0 0 2px #2D6A4F; }
+.calfdot { position: absolute; top: 2px; right: 2px; width: 4px; height: 4px; border-radius: 50%; background: #B5832A; }
+.caljdot { position: absolute; bottom: 2px; right: 2px; width: 4px; height: 4px; border-radius: 50%; background: #B5832A; }
+.cal-legend { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 10px; }
+.cleg { display: flex; align-items: center; gap: 5px; font-size: 11px; color: #8A8578; }
+.cleg-dot { width: 10px; height: 10px; border-radius: 3px; }
+
+/* DETAIL */
+.detbox { background: #F0EEE8; border: 1px solid #E2DDD4; border-radius: 10px; padding: 13px; margin-top: 12px; }
+.detrow { display: flex; justify-content: space-between; padding: 6px 0; border-bottom: 1px solid #E2DDD4; font-size: 13px; }
+.detrow:last-child { border-bottom: none; }
+.detk { font-family: 'DM Mono', monospace; font-size: 10px; color: #8A8578; }
+.detjournal { font-size: 13px; line-height: 1.6; font-style: italic; padding: 6px 0; }
+
+/* PROGRESS BAR */
+.pbar-wrap { margin-bottom: 12px; }
+.pbar-label { display: flex; justify-content: space-between; font-family: 'DM Mono', monospace; font-size: 10px; color: #8A8578; margin-bottom: 5px; }
+.pbar { height: 7px; background: #F0EEE8; border-radius: 10px; border: 1px solid #E2DDD4; overflow: hidden; }
+.pfill { height: 100%; background: #2D6A4F; border-radius: 10px; transition: width 0.4s; }
+.pfill.amber { background: #B5832A; }
+
+/* MEALS */
+.mcard { background: #F0EEE8; border: 1px solid #E2DDD4; border-radius: 10px; padding: 14px; margin-bottom: 10px; }
+.mtime { font-family: 'DM Mono', monospace; font-size: 9px; letter-spacing: 1px; text-transform: uppercase; color: #2D6A4F; margin-bottom: 5px; }
+.mname { font-family: 'DM Serif Display', serif; font-size: 15px; margin-bottom: 5px; }
+.mdesc { font-size: 12px; color: #8A8578; line-height: 1.5; }
+.mtag { display: inline-block; font-family: 'DM Mono', monospace; font-size: 9px; padding: 2px 8px; border-radius: 10px; background: #D8EDD8; color: #2D6A4F; margin-top: 7px; }
+
+/* HERBS */
+.hrow { display: flex; align-items: flex-start; gap: 12px; padding: 12px 0; border-bottom: 1px solid #E2DDD4; }
+.hrow:last-child { border-bottom: none; }
+.hicon { width: 34px; height: 34px; border-radius: 8px; background: #D8EDD8; display: flex; align-items: center; justify-content: center; font-size: 17px; flex-shrink: 0; }
+.hname { font-weight: 600; font-size: 13px; margin-bottom: 2px; }
+.huse { font-size: 12px; color: #8A8578; line-height: 1.4; }
+.hbadge { font-family: 'DM Mono', monospace; font-size: 9px; padding: 2px 8px; border-radius: 10px; background: #FBF0DC; color: #B5832A; margin-left: auto; flex-shrink: 0; }
+
+/* REMINDERS */
+.ritem { display: flex; align-items: center; gap: 12px; background: #F0EEE8; border: 1px solid #E2DDD4; border-radius: 10px; padding: 13px 14px; margin-bottom: 9px; }
+.ritem.rdone { opacity: 0.5; }
+.rcheck { width: 24px; height: 24px; border-radius: 50%; border: 1.5px solid #E2DDD4; background: #fff; cursor: pointer; flex-shrink: 0; display: flex; align-items: center; justify-content: center; font-size: 12px; }
+.rcheck.ron { background: #2D6A4F; border-color: #2D6A4F; color: #fff; }
+.rinfo { flex: 1; }
+.rname { font-size: 13px; font-weight: 600; margin-bottom: 2px; }
+.rdetail { font-size: 11px; color: #8A8578; line-height: 1.4; }
+.rtime { font-family: 'DM Mono', monospace; font-size: 10px; color: #8A8578; background: #fff; border: 1px solid #E2DDD4; padding: 3px 9px; border-radius: 6px; white-space: nowrap; flex-shrink: 0; }
+
+/* JOURNAL */
+.jtextarea { width: 100%; font-family: 'DM Sans', sans-serif; font-size: 14px; line-height: 1.6; padding: 13px; border: 1.5px solid #E2DDD4; border-radius: 10px; background: #F0EEE8; color: #1A1916; resize: vertical; min-height: 110px; outline: none; margin-bottom: 8px; display: block; }
+.jtextarea:focus { border-color: #2D6A4F; }
+.jcount { font-family: 'DM Mono', monospace; font-size: 10px; color: #8A8578; text-align: right; margin-bottom: 12px; }
+.jentry { background: #F0EEE8; border: 1px solid #E2DDD4; border-radius: 10px; padding: 13px; margin-bottom: 10px; }
+.jdate { font-family: 'DM Mono', monospace; font-size: 9px; color: #8A8578; margin-bottom: 6px; display: flex; justify-content: space-between; align-items: center; }
+.jdel { background: none; border: none; cursor: pointer; font-family: 'DM Mono', monospace; font-size: 10px; color: #8A8578; padding: 2px 6px; border-radius: 4px; }
+.jtext { font-size: 13px; line-height: 1.6; }
+.jempty { font-size: 13px; color: #8A8578; font-style: italic; }
+
+/* CHAT */
+.chatwrap { background: #fff; border: 1px solid #E2DDD4; border-radius: 12px; display: flex; flex-direction: column; }
+.chatmsgs { padding: 16px; display: flex; flex-direction: column; gap: 12px; min-height: 200px; max-height: 50vh; overflow-y: auto; -webkit-overflow-scrolling: touch; }
+.cmsg { max-width: 82%; }
+.cmsg.cu { align-self: flex-end; }
+.cmsg.ca { align-self: flex-start; }
+.cmlabel { font-family: 'DM Mono', monospace; font-size: 9px; color: #8A8578; margin-bottom: 3px; }
+.cmsg.cu .cmlabel { text-align: right; }
+.cmbubble { padding: 11px 14px; border-radius: 12px; font-size: 14px; line-height: 1.55; }
+.cmsg.cu .cmbubble { background: #2D6A4F; color: #fff; border-bottom-right-radius: 3px; }
+.cmsg.ca .cmbubble { background: #F0EEE8; border: 1px solid #E2DDD4; border-bottom-left-radius: 3px; }
+.chips { display: flex; gap: 7px; flex-wrap: wrap; padding: 10px 14px; border-top: 1px solid #E2DDD4; }
+.chip { font-family: 'DM Mono', monospace; font-size: 10px; padding: 6px 11px; border-radius: 14px; border: 1px solid #E2DDD4; background: #F0EEE8; color: #8A8578; cursor: pointer; }
+.chatinputrow { display: flex; gap: 8px; padding: 12px 14px; border-top: 1px solid #E2DDD4; }
+.cinput { flex: 1; font-family: 'DM Sans', sans-serif; font-size: 14px; padding: 9px 13px; border: 1.5px solid #E2DDD4; border-radius: 8px; background: #F0EEE8; color: #1A1916; outline: none; resize: none; min-height: 40px; }
+.cinput:focus { border-color: #2D6A4F; }
+.tdots { display: flex; gap: 4px; align-items: center; }
+.tdots span { width: 6px; height: 6px; border-radius: 50%; background: #8A8578; animation: td 1s infinite; }
+.tdots span:nth-child(2) { animation-delay: .15s; }
+.tdots span:nth-child(3) { animation-delay: .3s; }
+@keyframes td { 0%,60%,100% { transform: translateY(0); } 30% { transform: translateY(-4px); } }
+
+/* TOAST */
+#toast { position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%); background: #2D6A4F; color: #fff; font-family: 'DM Mono', monospace; font-size: 12px; padding: 10px 22px; border-radius: 30px; opacity: 0; pointer-events: none; transition: opacity 0.3s; z-index: 9999; white-space: nowrap; }
+#toast.show { opacity: 1; }
+</style>
+</head>
+<body>
+
+<!-- WhatsApp warning banner - shown if opened inside WhatsApp/viewer -->
+<div id="owbanner">
+  <strong>Important:</strong> Tap the 3 dots (top right) &rarr; "Open in Chrome" or "Open in Browser" for GutWell to work properly.
+</div>
+
+<div id="hdr">
+  <div class="logo">Gut<span>Well</span></div>
+  <div class="datebadge" id="datebadge"></div>
+</div>
+
+<div id="topnav">
+  <button class="tnav active" id="tab-checkin" onclick="goTab('checkin')">Check-In</button>
+  <button class="tnav" id="tab-journal" onclick="goTab('journal')">Journal</button>
+  <button class="tnav" id="tab-progress" onclick="goTab('progress')">Progress</button>
+  <button class="tnav" id="tab-meals" onclick="goTab('meals')">Meals</button>
+  <button class="tnav" id="tab-herbs" onclick="goTab('herbs')">Herbs</button>
+  <button class="tnav" id="tab-reminders" onclick="goTab('reminders')">Reminders</button>
+  <button class="tnav" id="tab-chat" onclick="goTab('chat')">Ask GutWell</button>
+</div>
+
+<!-- CHECK IN -->
+<div class="panel active" id="panel-checkin">
+  <div id="pb-checkin"></div>
+  <div id="notice-done" class="notice" style="display:none">Check-in already saved for today. Come back tomorrow.</div>
+  <span class="slabel">Today's Check-In</span>
+  <div class="card" id="checkin-form">
+    <h2>How are you feeling?</h2>
+    <p>30 seconds. Honest answers build the clearest picture over time.</p>
+    <div class="score-row">
+      <div class="score-block">
+        <label>BLOATING (1=none, 5=severe)</label>
+        <div class="dots" id="dots-bloating"></div>
+      </div>
+      <div class="score-block">
+        <label>ENERGY (1=low, 5=great)</label>
+        <div class="dots" id="dots-energy"></div>
+      </div>
+    </div>
+    <label style="display:block;font-family:'DM Mono',monospace;font-size:10px;color:#8A8578;margin-bottom:8px;letter-spacing:0.3px">BOWEL MOVEMENT TODAY</label>
+    <div class="pills" id="bowel-pills">
+      <button class="pill" onclick="pickPill('bowel-pills', this)">None</button>
+      <button class="pill" onclick="pickPill('bowel-pills', this)">Yes - Easy</button>
+      <button class="pill" onclick="pickPill('bowel-pills', this)">Yes - Difficult</button>
+      <button class="pill" onclick="pickPill('bowel-pills', this)">Diarrhea</button>
+    </div>
+    <div class="sw-row">
+      <label class="sw-label">Skin flare today?</label>
+      <label class="sw"><input type="checkbox" id="eczema-sw"><span class="swtrack"></span></label>
+    </div>
+    <button class="btn btn-g" onclick="submitCheckin()">Save Check-In</button>
+  </div>
+</div>
+
+<!-- JOURNAL -->
+<div class="panel" id="panel-journal">
+  <span class="slabel">Daily Journal</span>
+  <div class="card">
+    <h2>Today's Entry</h2>
+    <p>A few sentences is enough. How did your body feel? What did you eat? Any patterns noticed?</p>
+    <textarea class="jtextarea" id="jinput" placeholder="Write anything - how you felt today, what you ate, stress levels, anything that stood out..." maxlength="800" oninput="jcount()"></textarea>
+    <div class="jcount"><span id="jcharcount">0</span>/800</div>
+    <div class="btnrow">
+      <button class="btn btn-g" onclick="saveJournal()">Save Entry</button>
+      <button class="btn btn-w" onclick="clearJInput()">Clear</button>
+    </div>
+  </div>
+  <span class="slabel">Past Entries</span>
+  <div id="jlist"></div>
+</div>
+
+<!-- PROGRESS -->
+<div class="panel" id="panel-progress">
+  <span class="slabel">Your Journey</span>
+  <div id="rm-wrap"></div>
+  <div class="stats">
+    <div class="stat"><div class="stat-n" id="s-days">0</div><div class="stat-l">DAYS LOGGED</div></div>
+    <div class="stat"><div class="stat-n" id="s-streak">0</div><div class="stat-l">DAY STREAK</div></div>
+    <div class="stat"><div class="stat-n" id="s-flares">0</div><div class="stat-l">SKIN FLARES</div></div>
+  </div>
+  <div class="card">
+    <h2>30-Day Overview</h2>
+    <p>Tap a coloured day to see details.</p>
+    <div class="calgrid" id="calgrid"></div>
+    <div class="cal-legend">
+      <div class="cleg"><div class="cleg-dot" style="background:#D8EDD8;border:1px solid #2D6A4F"></div>Good</div>
+      <div class="cleg"><div class="cleg-dot" style="background:#FBF0DC;border:1px solid #B5832A"></div>Moderate</div>
+      <div class="cleg"><div class="cleg-dot" style="background:#fdddd8;border:1px solid #e07060"></div>Difficult</div>
+      <div class="cleg"><div class="cleg-dot" style="background:#F0EEE8;border:1px solid #E2DDD4"></div>No data</div>
+    </div>
+    <div id="detbox"></div>
+  </div>
+  <div class="card">
+    <h2>Averages</h2>
+    <p>Across all logged days.</p>
+    <div class="pbar-wrap">
+      <div class="pbar-label"><span>Bloating (lower is better)</span><span id="avg-bloat">-</span></div>
+      <div class="pbar"><div class="pfill" id="bar-bloat" style="width:0%"></div></div>
+    </div>
+    <div class="pbar-wrap">
+      <div class="pbar-label"><span>Energy (higher is better)</span><span id="avg-energy">-</span></div>
+      <div class="pbar"><div class="pfill amber" id="bar-energy" style="width:0%"></div></div>
+    </div>
+  </div>
+  <span class="slabel">Data</span>
+  <div class="card">
+    <h2>Your Stored Data</h2>
+    <p>All data is private on this device only. Export creates a file you can email to your practitioner.</p>
+    <div class="btnrow">
+      <button class="btn btn-w" onclick="exportData()">Export CSV</button>
+      <button class="btn btn-r" onclick="clearAllData()">Clear All Data</button>
+    </div>
+  </div>
+</div>
+
+<!-- MEALS -->
+<div class="panel" id="panel-meals">
+  <div id="pb-meals"></div>
+  <span class="slabel">Today's Meal Plan</span>
+  <div class="card">
+    <h2>Caribbean Gut-Healing Menu</h2>
+    <p id="meal-focus"></p>
+    <div id="meal-cards"></div>
+  </div>
+  <span class="slabel">Why These Foods?</span>
+  <div class="card"><p id="meal-why" style="margin-bottom:0"></p></div>
+</div>
+
+<!-- HERBS -->
+<div class="panel" id="panel-herbs">
+  <span class="slabel">Herb Tea Rotation</span>
+  <div class="card">
+    <h2>This Week's Schedule</h2>
+    <p>Rotate herbs rather than drinking the same one daily. Today's are marked.</p>
+    <div id="herb-rows"></div>
+  </div>
+  <div class="warn">
+    <strong>Caution:</strong> Cerasee and senna should not be used daily long-term.<br>
+    Start with ginger and peppermint as your safe daily baseline.<br>
+    If on any medication, check interactions with moringa or neem.
+  </div>
+</div>
+
+<!-- REMINDERS -->
+<div class="panel" id="panel-reminders">
+  <span class="slabel">Daily Protocol</span>
+  <div class="card">
+    <h2>Today's Checklist</h2>
+    <p>Tap each circle when done. Ticks reset automatically each morning.</p>
+    <div id="reminder-items"></div>
+  </div>
+  <div class="pbar-wrap">
+    <div class="pbar-label">
+      <span style="font-family:'DM Mono',monospace;font-size:10px;color:#8A8578;letter-spacing:0.3px">TODAY'S COMPLETION</span>
+      <span id="comp-pct" style="font-family:'DM Mono',monospace;font-size:10px;color:#2D6A4F">0%</span>
+    </div>
+    <div class="pbar"><div class="pfill" id="comp-bar" style="width:0%"></div></div>
+  </div>
+</div>
+
+<!-- CHAT -->
+<div class="panel" id="panel-chat">
+  <span class="slabel">AI Gut Health Assistant</span>
+  <div class="chatwrap">
+    <div class="chatmsgs" id="chatmsgs">
+      <div class="cmsg ca">
+        <div class="cmlabel">GUTWELL AI</div>
+        <div class="cmbubble">Hello! I know your profile - Caribbean diet, constipation-dominant digestion, occasional eczema flares, and low energy. Ask me anything about your gut healing journey. How can I help?</div>
+      </div>
+    </div>
+    <div class="chips">
+      <div class="chip" onclick="chipSend(this)">What to eat today?</div>
+      <div class="chip" onclick="chipSend(this)">Bad bloating tonight</div>
+      <div class="chip" onclick="chipSend(this)">Which herb tea today?</div>
+      <div class="chip" onclick="chipSend(this)">Why low energy?</div>
+      <div class="chip" onclick="chipSend(this)">Eczema connection</div>
+    </div>
+    <div class="chatinputrow">
+      <textarea class="cinput" id="cinput" placeholder="Ask anything..." rows="1" onkeydown="chatKey(event)"></textarea>
+      <button class="btn btn-g" onclick="chatSend()" style="align-self:flex-end;padding:10px 16px">Send</button>
+    </div>
+  </div>
+</div>
+
+<div id="toast"></div>
+
+<script>
+// Detect WhatsApp / in-app browser and show warning
+(function() {
+  var ua = navigator.userAgent || '';
+  var isInApp = /FBAN|FBAV|Instagram|WhatsApp|Messenger|MicroMessenger|Line|wechat|twitter/i.test(ua);
+  if (isInApp) {
+    document.getElementById('owbanner').style.display = 'block';
+  }
+})();
+
+// ── STORAGE ──────────────────────────────────────────────────────
+var LS = {
+  get: function(k, fb) {
+    try {
+      var v = localStorage.getItem(k);
+      if (v === null) return (fb !== undefined) ? fb : null;
+      return JSON.parse(v);
+    } catch(e) { return (fb !== undefined) ? fb : null; }
+  },
+  set: function(k, v) {
+    try { localStorage.setItem(k, JSON.stringify(v)); return true; }
+    catch(e) { toast('Storage full - export and clear old data'); return false; }
+  },
+  del: function(k) { try { localStorage.removeItem(k); } catch(e) {} }
+};
+
+function todayKey() {
+  var d = new Date();
+  var y = d.getFullYear();
+  var m = ('0' + (d.getMonth() + 1)).slice(-2);
+  var day = ('0' + d.getDate()).slice(-2);
+  return y + '-' + m + '-' + day;
+}
+function reminderKey() { return 'rem_' + todayKey(); }
+
+// ── DATE ─────────────────────────────────────────────────────────
+document.getElementById('datebadge').textContent =
+  new Date().toLocaleDateString('en-US', {weekday:'short', month:'short', day:'numeric'}).toUpperCase();
+
+// ── PHASE DATA ───────────────────────────────────────────────────
+var PHASES = [
+  {
+    num:1, label:'Phase 1', name:'Get Moving', weeks:'Weeks 1-2', cls:'p1',
+    focus:'Motility, hydration, establishing your morning routine.',
+    meals:[
+      {time:'Morning', name:'Ginger Oats & Mango', desc:'Rolled oats with sliced fresh mango, pumpkin seeds, warm ginger lemon water on the side.', tag:'Prebiotic + Enzyme'},
+      {time:'Midday', name:'Snapper & Ground Provisions', desc:'Steamed red snapper with boiled green banana, okra, and callaloo. Papaya wedge after.', tag:'Omega-3 + Motility'},
+      {time:'Evening', name:'Pumpkin Soup', desc:'Light pumpkin and dasheen soup with fresh herbs. Keep the evening meal small and easy to digest.', tag:'Anti-inflammatory'}
+    ],
+    why:'This phase prioritises soluble fibre from green banana and oats to gently stimulate motility without worsening bloating. Papaya provides natural digestive enzymes. Okra soothes and lubricates the intestinal lining. Fresh fish delivers omega-3s targeting gut-skin inflammation.',
+    reminders:[
+      {id:'r1', name:'Warm Lemon & Ginger Water', detail:'First thing, before coffee or food', time:'Morning'},
+      {id:'r2', name:'Psyllium Husk', detail:'Half tsp in water, build to 1 tsp over 2 weeks', time:'Morning'},
+      {id:'r3', name:'Breathing Before Meals', detail:'2 min diaphragmatic breathing before eating', time:'Midday'},
+      {id:'r4', name:'Evening Walk', detail:'10 minutes after dinner - supports motility', time:'Evening'},
+      {id:'r5', name:'Magnesium Glycinate', detail:'200mg before bed', time:'Night'},
+      {id:'r6', name:'Herb Tea', detail:'Check Herbs tab for today rotation', time:'Evening'}
+    ]
+  },
+  {
+    num:2, label:'Phase 2', name:'Rebuild', weeks:'Weeks 3-4', cls:'p2',
+    focus:'Feeding the microbiome, diversifying gut bacteria, reducing inflammation.',
+    meals:[
+      {time:'Morning', name:'Kefir & Tropical Fruit Bowl', desc:'Plain kefir with mango, papaya, and ground flaxseed. Ginger tea on the side.', tag:'Probiotic + Prebiotic'},
+      {time:'Midday', name:'Fish & Bean Bowl', desc:'Grilled kingfish with stewed red beans, rice (cooked and cooled), and steamed callaloo.', tag:'Resistant Starch + Fibre'},
+      {time:'Evening', name:'Breadfruit & Vegetable Stew', desc:'Roasted breadfruit with mixed vegetables in a light coconut broth. Pineapple wedge after.', tag:'Prebiotic + Enzyme'}
+    ],
+    why:'Phase 2 introduces fermented foods like kefir to seed the microbiome with beneficial bacteria. Cooked and cooled rice becomes resistant starch - powerful prebiotic fuel for good bacteria. Breadfruit feeds microbial diversity. Bean intake increases gradually for prebiotic fibre.',
+    reminders:[
+      {id:'r1', name:'Warm Lemon & Ginger Water', detail:'First thing, before coffee or food', time:'Morning'},
+      {id:'r2', name:'Kefir or Fermented Food', detail:'One serving daily with breakfast', time:'Morning'},
+      {id:'r3', name:'Psyllium Husk', detail:'1 tsp in water, building consistency', time:'Morning'},
+      {id:'r4', name:'Breathing Before Meals', detail:'2 min diaphragmatic breathing', time:'Midday'},
+      {id:'r5', name:'Evening Walk', detail:'10-15 minutes after dinner', time:'Evening'},
+      {id:'r6', name:'Magnesium Glycinate', detail:'200mg before bed', time:'Night'}
+    ]
+  },
+  {
+    num:3, label:'Phase 3', name:'Repair & Sustain', weeks:'Month 2+', cls:'p3',
+    focus:'Gut lining repair, nutrient restoration, locking in long-term habits.',
+    meals:[
+      {time:'Morning', name:'Bone Broth Eggs & Yam', desc:'Two eggs cooked in bone broth with boiled yellow yam and steamed callaloo. Moringa tea.', tag:'Collagen + Gut Lining'},
+      {time:'Midday', name:'Snapper Escovitch & Provisions', desc:'Lightly fried snapper with green banana, dasheen, and roasted vegetables.', tag:'Omega-3 + Diversity'},
+      {time:'Evening', name:'Golden Turmeric Soup', desc:'Pumpkin, carrot, and dasheen soup with fresh turmeric and black pepper.', tag:'Anti-inflammatory'}
+    ],
+    why:'Phase 3 focuses on gut lining repair using bone broth collagen and glutamine. Turmeric with black pepper provides deep anti-inflammatory action for both gut lining and skin. Meal diversity peaks here, aiming for 25-30 different plants per week. Omega-3s continue targeting the eczema connection.',
+    reminders:[
+      {id:'r1', name:'Warm Bone Broth or Lemon Water', detail:'First thing in the morning', time:'Morning'},
+      {id:'r2', name:'Omega-3 Supplement', detail:'Fish oil or algae-based with breakfast', time:'Morning'},
+      {id:'r3', name:'Zinc Supplement', detail:'With food - supports gut lining and skin', time:'Midday'},
+      {id:'r4', name:'Breathing and Journaling', detail:'5 min breathing plus brief journal entry', time:'Any time'},
+      {id:'r5', name:'Evening Walk', detail:'15+ minutes - now a habit, keep it', time:'Evening'},
+      {id:'r6', name:'Magnesium Glycinate', detail:'200mg before bed', time:'Night'}
+    ]
+  }
+];
+
+var HERBS = [
+  {icon:'🫚', name:'Ginger Tea', use:'Stimulates motility, reduces bloating. Before or after meals. Safe daily.', days:[0,1,2,3,4,5,6]},
+  {icon:'🌿', name:'Peppermint Tea', use:'Antispasmodic, relieves gas and cramping. Best after dinner. Safe daily.', days:[0,1,2,3,4,5,6]},
+  {icon:'🍃', name:'Soursop Leaf Tea', use:'Antimicrobial, digestive support. Traditional Caribbean remedy. 3x per week max.', days:[1,3,5]},
+  {icon:'🌱', name:'Moringa Tea', use:'Nutrient-dense, anti-inflammatory, liver and skin support. 4x per week.', days:[0,2,4,6]},
+  {icon:'🍵', name:'Cerasee (Bitter Melon)', use:'Blood purifying, anti-inflammatory. Potent - 3x per week maximum only.', days:[2,4,6]}
+];
+
+// ── PHASE HELPERS ────────────────────────────────────────────────
+function getPhaseIndex() {
+  var start = LS.get('start_date');
+  if (!start) { LS.set('start_date', todayKey()); return 0; }
+  var s = new Date(start + 'T12:00:00');
+  var n = new Date(); n.setHours(12,0,0,0);
+  var days = Math.floor((n - s) / 86400000);
+  if (days < 14) return 0;
+  if (days < 28) return 1;
+  if (days < 60) return 2;
+  return 3;
+}
+
+function getDaysLeft() {
+  var start = LS.get('start_date');
+  if (!start) return 14;
+  var s = new Date(start + 'T12:00:00');
+  var n = new Date(); n.setHours(12,0,0,0);
+  var days = Math.floor((n - s) / 86400000);
+  if (days < 14) return 14 - days;
+  if (days < 28) return 28 - days;
+  if (days < 60) return 60 - days;
+  return 0;
+}
+
+// ── TOAST ────────────────────────────────────────────────────────
+var toastTmr = null;
+function toast(msg) {
+  var el = document.getElementById('toast');
+  el.textContent = msg;
+  el.classList.add('show');
+  if (toastTmr) clearTimeout(toastTmr);
+  toastTmr = setTimeout(function() { el.classList.remove('show'); }, 2500);
+}
+
+// ── TABS ─────────────────────────────────────────────────────────
+function goTab(id) {
+  var panels = document.querySelectorAll('.panel');
+  for (var i = 0; i < panels.length; i++) panels[i].classList.remove('active');
+  var tabs = document.querySelectorAll('.tnav');
+  for (var i = 0; i < tabs.length; i++) tabs[i].classList.remove('active');
+  var panel = document.getElementById('panel-' + id);
+  var tab = document.getElementById('tab-' + id);
+  if (panel) panel.classList.add('active');
+  if (tab) tab.classList.add('active');
+  if (id === 'progress') { buildProgress(); buildRoadmap(); }
+  if (id === 'reminders') buildReminders();
+  if (id === 'journal') buildJournal();
+  if (id === 'meals') buildMeals();
+}
+
+// ── PHASE BANNER ─────────────────────────────────────────────────
+function buildBanner(targetId) {
+  var el = document.getElementById(targetId);
+  if (!el) return;
+  var pi = getPhaseIndex();
+  var dl = getDaysLeft();
+  if (pi >= 3) {
+    el.innerHTML = '<div class="pbanner pm"><div><div class="pb-label">CURRENT PHASE</div><div class="pb-title">Maintenance</div><div class="pb-desc">Month 3+ - Habits locked in - Continue monitoring</div></div><div class="pb-num">&#10003;</div></div>';
+  } else {
+    var p = PHASES[pi];
+    el.innerHTML = '<div class="pbanner ' + p.cls + '"><div><div class="pb-label">CURRENT PHASE</div><div class="pb-title">' + p.label + ' - ' + p.name + '</div><div class="pb-desc">' + p.weeks + ' - ' + dl + ' day' + (dl !== 1 ? 's' : '') + ' remaining</div></div><div class="pb-num">' + p.num + '</div></div>';
+  }
+}
+
+// ── ROADMAP ──────────────────────────────────────────────────────
+function buildRoadmap() {
+  var el = document.getElementById('rm-wrap');
+  if (!el) return;
+  var pi = getPhaseIndex();
+  var steps = [
+    {label:'Phase 1', name:'Get Moving', wk:'Weeks 1-2'},
+    {label:'Phase 2', name:'Rebuild', wk:'Weeks 3-4'},
+    {label:'Phase 3', name:'Repair', wk:'Month 2+'},
+    {label:'Maintain', name:'Sustain', wk:'Month 3+'}
+  ];
+  var html = '<div class="roadmap">';
+  for (var i = 0; i < steps.length; i++) {
+    var s = steps[i];
+    var cls = 'rmstep';
+    if (i < pi) cls += ' rmd';
+    if (i === pi || (i === 3 && pi >= 3)) cls += ' rma';
+    var tick = '';
+    if (i < pi) tick = '<div class="rmtick">&#10003;</div>';
+    else if (i === pi || (i === 3 && pi >= 3)) tick = '<div class="rmtick">&#9679;</div>';
+    html += '<div class="' + cls + '">' + tick + '<div class="rmlabel">' + s.label.toUpperCase() + '</div><div class="rmname">' + s.name + '</div><div class="rmwk">' + s.wk + '</div></div>';
+  }
+  html += '</div>';
+  el.innerHTML = html;
+}
+
+// ── CHECK-IN DOTS ────────────────────────────────────────────────
+function buildDots(id) {
+  var el = document.getElementById(id);
+  if (!el) return;
+  el.innerHTML = '';
+  for (var i = 1; i <= 5; i++) {
+    (function(val) {
+      var d = document.createElement('div');
+      d.className = 'dot';
+      d.textContent = val;
+      d.onclick = function() {
+        var siblings = el.querySelectorAll('.dot');
+        for (var j = 0; j < siblings.length; j++) siblings[j].classList.remove('on');
+        d.classList.add('on');
+      };
+      el.appendChild(d);
+    })(i);
+  }
+}
+
+function pickPill(groupId, btn) {
+  var grp = document.getElementById(groupId);
+  if (!grp) return;
+  var pills = grp.querySelectorAll('.pill');
+  for (var i = 0; i < pills.length; i++) pills[i].classList.remove('on');
+  btn.classList.add('on');
+}
+
+function getSelectedDot(id) {
+  var el = document.querySelector('#' + id + ' .dot.on');
+  return el ? parseInt(el.textContent) : null;
+}
+
+function checkTodayDone() {
+  if (LS.get('checkin_' + todayKey())) {
+    var n = document.getElementById('notice-done');
+    var f = document.getElementById('checkin-form');
+    if (n) n.style.display = 'block';
+    if (f) { f.style.opacity = '0.4'; f.style.pointerEvents = 'none'; }
+  }
+}
+
+function submitCheckin() {
+  var bloating = getSelectedDot('dots-bloating');
+  var energy = getSelectedDot('dots-energy');
+  var bowelEl = document.querySelector('#bowel-pills .pill.on');
+  if (!bloating || !energy || !bowelEl) { toast('Please fill in all fields'); return; }
+  var entry = {
+    date: todayKey(),
+    bloating: bloating,
+    energy: energy,
+    bowel: bowelEl.textContent,
+    eczema: document.getElementById('eczema-sw').checked
+  };
+  LS.set('checkin_' + todayKey(), entry);
+  var idx = LS.get('checkin_index', []);
+  var found = false;
+  for (var i = 0; i < idx.length; i++) { if (idx[i] === todayKey()) { found = true; break; } }
+  if (!found) { idx.push(todayKey()); LS.set('checkin_index', idx); }
+  toast('Check-in saved');
+  checkTodayDone();
+}
+
+// ── JOURNAL ──────────────────────────────────────────────────────
+function jcount() {
+  var el = document.getElementById('jcharcount');
+  var inp = document.getElementById('jinput');
+  if (el && inp) el.textContent = inp.value.length;
+}
+
+function saveJournal() {
+  var inp = document.getElementById('jinput');
+  if (!inp) return;
+  var text = inp.value.replace(/^\s+|\s+$/g, '');
+  if (!text) { toast('Write something first'); return; }
+  var entries = LS.get('journal_entries', []);
+  var idx = -1;
+  for (var i = 0; i < entries.length; i++) { if (entries[i].date === todayKey()) { idx = i; break; } }
+  var entry = {date: todayKey(), text: text, ts: Date.now()};
+  if (idx >= 0) entries[idx] = entry; else entries.unshift(entry);
+  LS.set('journal_entries', entries);
+  toast('Journal entry saved');
+  buildJournal();
+}
+
+function clearJInput() {
+  var inp = document.getElementById('jinput');
+  var cnt = document.getElementById('jcharcount');
+  if (inp) inp.value = '';
+  if (cnt) cnt.textContent = '0';
+}
+
+function deleteJEntry(date) {
+  if (!confirm('Delete this entry?')) return;
+  var entries = LS.get('journal_entries', []);
+  var updated = [];
+  for (var i = 0; i < entries.length; i++) { if (entries[i].date !== date) updated.push(entries[i]); }
+  LS.set('journal_entries', updated);
+  toast('Entry deleted');
+  buildJournal();
+}
+
+function esc(str) {
+  return str.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/\n/g,'<br>');
+}
+
+function buildJournal() {
+  var entries = LS.get('journal_entries', []);
+  var inp = document.getElementById('jinput');
+  var todayEntry = null;
+  for (var i = 0; i < entries.length; i++) { if (entries[i].date === todayKey()) { todayEntry = entries[i]; break; } }
+  if (todayEntry && inp && !inp.value) {
+    inp.value = todayEntry.text;
+    var cnt = document.getElementById('jcharcount');
+    if (cnt) cnt.textContent = todayEntry.text.length;
+  }
+  var list = document.getElementById('jlist');
+  if (!list) return;
+  if (!entries.length) { list.innerHTML = '<div class="jempty">No journal entries yet. Write your first one above.</div>'; return; }
+  var html = '';
+  var shown = entries.length > 30 ? entries.slice(0, 30) : entries;
+  for (var i = 0; i < shown.length; i++) {
+    var e = shown[i];
+    var d = new Date(e.date + 'T12:00:00');
+    var label = d.toLocaleDateString('en-US', {weekday:'long', month:'long', day:'numeric'});
+    var isToday = e.date === todayKey();
+    html += '<div class="jentry"><div class="jdate"><span>' + label.toUpperCase() + (isToday ? ' - TODAY' : '') + '</span><button class="jdel" onclick="deleteJEntry(\'' + e.date + '\')">x delete</button></div><div class="jtext">' + esc(e.text) + '</div></div>';
+  }
+  list.innerHTML = html;
+}
+
+// ── PROGRESS ─────────────────────────────────────────────────────
+function entryScore(e) {
+  var s = 0;
+  if (e.bloating <= 2) s += 2; else if (e.bloating === 3) s += 1;
+  if (e.energy >= 4) s += 2; else if (e.energy === 3) s += 1;
+  if (e.bowel && e.bowel !== 'None') s += 1;
+  return s;
+}
+
+function calcStreak(idx) {
+  if (!idx.length) return 0;
+  var sorted = idx.slice().sort().reverse();
+  var streak = 0;
+  var today = new Date(); today.setHours(0,0,0,0);
+  for (var i = 0; i < sorted.length; i++) {
+    var exp = new Date(today);
+    exp.setDate(exp.getDate() - i);
+    var ey = exp.getFullYear();
+    var em = ('0' + (exp.getMonth()+1)).slice(-2);
+    var ed = ('0' + exp.getDate()).slice(-2);
+    if (sorted[i] === ey + '-' + em + '-' + ed) streak++;
+    else break;
+  }
+  return streak;
+}
+
+function buildProgress() {
+  var idx = LS.get('checkin_index', []);
+  var entries = [];
+  for (var i = 0; i < idx.length; i++) { var e = LS.get('checkin_' + idx[i]); if (e) entries.push(e); }
+
+  var dEl = document.getElementById('s-days');
+  var stEl = document.getElementById('s-streak');
+  var flEl = document.getElementById('s-flares');
+  if (dEl) dEl.textContent = entries.length;
+  if (stEl) stEl.textContent = calcStreak(idx);
+  var flares = 0;
+  for (var i = 0; i < entries.length; i++) { if (entries[i].eczema) flares++; }
+  if (flEl) flEl.textContent = flares;
+
+  if (entries.length) {
+    var ab = 0, ae = 0;
+    for (var i = 0; i < entries.length; i++) { ab += entries[i].bloating; ae += entries[i].energy; }
+    ab = Math.round((ab / entries.length) * 10) / 10;
+    ae = Math.round((ae / entries.length) * 10) / 10;
+    var abEl = document.getElementById('avg-bloat');
+    var aeEl = document.getElementById('avg-energy');
+    var bbEl = document.getElementById('bar-bloat');
+    var beEl = document.getElementById('bar-energy');
+    if (abEl) abEl.textContent = ab + '/5';
+    if (aeEl) aeEl.textContent = ae + '/5';
+    if (bbEl) bbEl.style.width = (ab / 5 * 100) + '%';
+    if (beEl) beEl.style.width = (ae / 5 * 100) + '%';
+  }
+
+  var journalEntries = LS.get('journal_entries', []);
+  var jmap = {};
+  for (var i = 0; i < journalEntries.length; i++) { jmap[journalEntries[i].date] = journalEntries[i]; }
+
+  var grid = document.getElementById('calgrid');
+  if (!grid) return;
+  grid.innerHTML = '';
+  var today = new Date(); today.setHours(0,0,0,0);
+
+  for (var i = 29; i >= 0; i--) {
+    var d = new Date(today.getTime());
+    d.setDate(d.getDate() - i);
+    var ky = d.getFullYear();
+    var km = ('0' + (d.getMonth()+1)).slice(-2);
+    var kd = ('0' + d.getDate()).slice(-2);
+    var key = ky + '-' + km + '-' + kd;
+    var entry = LS.get('checkin_' + key);
+    var hasJ = !!jmap[key];
+
+    var cell = document.createElement('div');
+    cell.className = 'calcell';
+
+    var inner = document.createElement('div');
+    inner.className = 'calinner' + (i === 0 ? ' ct' : '');
+    inner.textContent = d.getDate();
+
+    if (entry) {
+      var sc = entryScore(entry);
+      if (sc >= 4) inner.className = inner.className + ' cg';
+      else if (sc >= 2) inner.className = inner.className + ' cm';
+      else inner.className = inner.className + ' cp';
+      if (entry.eczema) {
+        var fdot = document.createElement('div');
+        fdot.className = 'calfdot';
+        inner.appendChild(fdot);
+      }
+      (function(en, k, j) {
+        inner.onclick = function() { showDetail(en, k, j); };
+      })(entry, key, jmap[key] || null);
+    }
+
+    if (hasJ) {
+      var jdot = document.createElement('div');
+      jdot.className = 'caljdot';
+      inner.appendChild(jdot);
+    }
+
+    cell.appendChild(inner);
+    grid.appendChild(cell);
+  }
+}
+
+function showDetail(entry, key, journal) {
+  var el = document.getElementById('detbox');
+  if (!el) return;
+  var d = new Date(key + 'T12:00:00');
+  var label = d.toLocaleDateString('en-US', {weekday:'long', month:'long', day:'numeric'});
+  var html = '<div class="detbox"><div style="font-family:\'DM Serif Display\',serif;font-size:15px;margin-bottom:10px">' + label + '</div>';
+  html += '<div class="detrow"><span class="detk">BLOATING</span><span>' + entry.bloating + '/5</span></div>';
+  html += '<div class="detrow"><span class="detk">ENERGY</span><span>' + entry.energy + '/5</span></div>';
+  html += '<div class="detrow"><span class="detk">BOWEL</span><span>' + esc(entry.bowel) + '</span></div>';
+  html += '<div class="detrow"><span class="detk">SKIN FLARE</span><span>' + (entry.eczema ? 'Yes' : 'No') + '</span></div>';
+  if (journal) {
+    html += '<div class="detrow" style="flex-direction:column;align-items:flex-start"><span class="detk" style="margin-bottom:5px">JOURNAL</span><div class="detjournal">' + esc(journal.text) + '</div></div>';
+  }
+  html += '</div>';
+  el.innerHTML = html;
+}
+
+// ── MEALS ────────────────────────────────────────────────────────
+function buildMeals() {
+  var pi = getPhaseIndex();
+  if (pi > 2) pi = 2;
+  var p = PHASES[pi];
+  buildBanner('pb-meals');
+  var fc = document.getElementById('meal-focus');
+  var wy = document.getElementById('meal-why');
+  var mc = document.getElementById('meal-cards');
+  if (fc) fc.textContent = p.focus;
+  if (wy) wy.textContent = p.why;
+  if (!mc) return;
+  var html = '';
+  for (var i = 0; i < p.meals.length; i++) {
+    var m = p.meals[i];
+    html += '<div class="mcard"><div class="mtime">' + m.time + '</div><div class="mname">' + m.name + '</div><div class="mdesc">' + m.desc + '</div><span class="mtag">' + m.tag + '</span></div>';
+  }
+  mc.innerHTML = html;
+}
+
+// ── HERBS ────────────────────────────────────────────────────────
+function buildHerbs() {
+  var el = document.getElementById('herb-rows');
+  if (!el) return;
+  var dow = new Date().getDay();
+  var html = '';
+  for (var i = 0; i < HERBS.length; i++) {
+    var h = HERBS[i];
+    var isToday = false;
+    for (var j = 0; j < h.days.length; j++) { if (h.days[j] === dow) { isToday = true; break; } }
+    html += '<div class="hrow"><div class="hicon">' + h.icon + '</div><div style="flex:1"><div class="hname">' + h.name + '</div><div class="huse">' + h.use + '</div></div>' + (isToday ? '<span class="hbadge">TODAY</span>' : '') + '</div>';
+  }
+  el.innerHTML = html;
+}
+
+// ── REMINDERS ────────────────────────────────────────────────────
+function buildReminders() {
+  var pi = getPhaseIndex();
+  if (pi > 2) pi = 2;
+  var reminders = PHASES[pi].reminders;
+  var saved = LS.get(reminderKey(), {});
+  var el = document.getElementById('reminder-items');
+  if (!el) return;
+  var html = '';
+  for (var i = 0; i < reminders.length; i++) {
+    var r = reminders[i];
+    var done = !!saved[r.id];
+    html += '<div class="ritem' + (done ? ' rdone' : '') + '" id="ri-' + r.id + '">';
+    html += '<div class="rcheck' + (done ? ' ron' : '') + '" id="rc-' + r.id + '" onclick="toggleR(\'' + r.id + '\')">' + (done ? '&#10003;' : '') + '</div>';
+    html += '<div class="rinfo"><div class="rname">' + r.name + '</div><div class="rdetail">' + r.detail + '</div></div>';
+    html += '<div class="rtime">' + r.time + '</div></div>';
+  }
+  el.innerHTML = html;
+  updateComp(reminders.length);
+}
+
+function toggleR(id) {
+  var pi = getPhaseIndex();
+  if (pi > 2) pi = 2;
+  var total = PHASES[pi].reminders.length;
+  var saved = LS.get(reminderKey(), {});
+  saved[id] = !saved[id];
+  if (!saved[id]) delete saved[id];
+  LS.set(reminderKey(), saved);
+  var done = !!saved[id];
+  var check = document.getElementById('rc-' + id);
+  var item = document.getElementById('ri-' + id);
+  if (check) { check.className = 'rcheck' + (done ? ' ron' : ''); check.innerHTML = done ? '&#10003;' : ''; }
+  if (item) { item.className = 'ritem' + (done ? ' rdone' : ''); }
+  updateComp(total);
+}
+
+function updateComp(total) {
+  var saved = LS.get(reminderKey(), {});
+  var count = 0;
+  for (var k in saved) { if (saved.hasOwnProperty(k) && saved[k]) count++; }
+  var pct = total > 0 ? Math.round(count / total * 100) : 0;
+  var pEl = document.getElementById('comp-pct');
+  var bEl = document.getElementById('comp-bar');
+  if (pEl) pEl.textContent = pct + '%';
+  if (bEl) bEl.style.width = pct + '%';
+}
+
+// ── DATA ─────────────────────────────────────────────────────────
+function exportData() {
+  var idx = LS.get('checkin_index', []);
+  var jentries = LS.get('journal_entries', []);
+  var jmap = {};
+  for (var i = 0; i < jentries.length; i++) { jmap[jentries[i].date] = jentries[i].text; }
+  var rows = ['Date,Bloating (1-5),Energy (1-5),Bowel Movement,Skin Flare,Journal Entry'];
+  idx.sort();
+  for (var i = 0; i < idx.length; i++) {
+    var e = LS.get('checkin_' + idx[i]);
+    if (e) {
+      var j = jmap[e.date] ? jmap[e.date].replace(/"/g, '""').replace(/\n/g, ' ') : '';
+      rows.push(e.date + ',' + e.bloating + ',' + e.energy + ',"' + e.bowel + '",' + (e.eczema ? 'Yes' : 'No') + ',"' + j + '"');
+    }
+  }
+  try {
+    var blob = new Blob([rows.join('\n')], {type: 'text/csv'});
+    var a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = 'gutwell-' + todayKey() + '.csv';
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    toast('Exported - check Downloads');
+  } catch(e) { toast('Export failed - try on a computer'); }
+}
+
+function clearAllData() {
+  if (!confirm('This will permanently delete ALL check-ins and journal entries. Are you sure?')) return;
+  var idx = LS.get('checkin_index', []);
+  for (var i = 0; i < idx.length; i++) { LS.del('checkin_' + idx[i]); }
+  LS.del('checkin_index');
+  LS.del('journal_entries');
+  LS.del('start_date');
+  toast('All data cleared');
+  buildProgress();
+  buildRoadmap();
+  var n = document.getElementById('notice-done');
+  var f = document.getElementById('checkin-form');
+  if (n) n.style.display = 'none';
+  if (f) { f.style.opacity = '1'; f.style.pointerEvents = 'auto'; }
+}
+
+// ── CHAT ─────────────────────────────────────────────────────────
+var SYS = 'You are GutWell, a warm but clinical gut health assistant helping a Caribbean patient with: constipation-dominant irregular bowel movements, bloating building through the day, low energy at times, recurring nummular eczema (2-3 times per year for 3 years), mild background anxiety and tendency to internalize, and access to Caribbean foods and herbs. Protocol: Phase 1 (Weeks 1-2) motility focus; Phase 2 (Weeks 3-4) microbiome rebuild; Phase 3 (Month 2+) gut lining repair; Maintenance (Month 3+). Caribbean foods: green banana, breadfruit, okra, callaloo, pumpkin, papaya, soursop, mango, coconut, fresh fish, dasheen, yam. Caribbean herbs: ginger, peppermint, soursop leaf, moringa, aloe vera, cerasee, chaney root, bissy, tamarind, turmeric. Be warm, practical, concise (2-4 short paragraphs). Ground advice in Caribbean context. Suggest a doctor when genuinely needed. Never diagnose.';
+
+var chatHistory = [];
+var typingEl = null;
+
+function chatSend() {
+  var inp = document.getElementById('cinput');
+  if (!inp) return;
+  var text = inp.value.replace(/^\s+|\s+$/g, '');
+  if (!text) return;
+  inp.value = '';
+  addMsg('user', text);
+  chatHistory.push({role:'user', content:text});
+  showTyping();
+  fetch('https://api.anthropic.com/v1/messages', {
+    method: 'POST',
+    headers: {'Content-Type': 'application/json'},
+    body: JSON.stringify({model:'claude-sonnet-4-20250514', max_tokens:1000, system:SYS, messages:chatHistory})
+  }).then(function(res) {
+    return res.json();
+  }).then(function(data) {
+    hideTyping();
+    var reply = 'Sorry, I had trouble responding. Please try again.';
+    if (data && data.content) {
+      for (var i = 0; i < data.content.length; i++) {
+        if (data.content[i].type === 'text') { reply = data.content[i].text; break; }
+      }
+    }
+    addMsg('ai', reply);
+    chatHistory.push({role:'assistant', content:reply});
+  }).catch(function() {
+    hideTyping();
+    addMsg('ai', 'Connection issue. Please check your internet and try again.');
+  });
+}
+
+function addMsg(role, text) {
+  var c = document.getElementById('chatmsgs');
+  if (!c) return;
+  var div = document.createElement('div');
+  div.className = 'cmsg ' + (role === 'user' ? 'cu' : 'ca');
+  div.innerHTML = '<div class="cmlabel">' + (role === 'user' ? 'YOU' : 'GUTWELL AI') + '</div><div class="cmbubble">' + esc(text) + '</div>';
+  c.appendChild(div);
+  c.scrollTop = c.scrollHeight;
+}
+
+function showTyping() {
+  var c = document.getElementById('chatmsgs');
+  if (!c) return;
+  typingEl = document.createElement('div');
+  typingEl.className = 'cmsg ca';
+  typingEl.innerHTML = '<div class="cmlabel">GUTWELL AI</div><div class="cmbubble"><div class="tdots"><span></span><span></span><span></span></div></div>';
+  c.appendChild(typingEl);
+  c.scrollTop = c.scrollHeight;
+}
+
+function hideTyping() {
+  if (typingEl && typingEl.parentNode) { typingEl.parentNode.removeChild(typingEl); typingEl = null; }
+}
+
+function chipSend(chip) {
+  var inp = document.getElementById('cinput');
+  if (inp) { inp.value = chip.textContent; chatSend(); }
+}
+
+function chatKey(e) {
+  if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); chatSend(); }
+}
+
+// ── INIT ─────────────────────────────────────────────────────────
+buildDots('dots-bloating');
+buildDots('dots-energy');
+buildBanner('pb-checkin');
+checkTodayDone();
+buildHerbs();
+buildReminders();
+buildMeals();
+</script>
+</body>
+</html>
